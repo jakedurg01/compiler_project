@@ -1,0 +1,2 @@
+$test_var = 34;
+$vartest = 5 + 3;
