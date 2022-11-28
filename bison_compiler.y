@@ -15,7 +15,6 @@ void yyerror(const char *s);
 
 %token <ival> NUM
 %token <sval> SPACE
-%token <sval> EOL
 %token <sval> IF
 %token <sval> ELSE
 %token <sval> THEN
@@ -23,24 +22,19 @@ void yyerror(const char *s);
 %token <sval> STOP
 %token <sval> REPEAT
 %token <sval> VAR
-%token <sval> ASSIGN
-%token <sval> MUL
-%token <sval> ADD
-%token <sval> SUB
-%token <sval> DIV
 %token <sval> EQL
 
 %%
 lojban:
-    line lojban | line {printf("line found\n");}
-line:
-    expression EOL {printf("var assignment found\n");}
-expression:
-    value operator expression | value 
-value:
-    NUM | VAR
-operator:
-    ADD | SUB | MUL | DIV | ASSIGN
+    assignment END | assignment lojban{printf("var assignment found\n");}
+assignment:
+    VAR '=' arithmetic_exp ';'
+arithmetic_exp:
+    arithmetic_exp '+' factor | arithmetic_exp '-' factor | factor
+factor:
+    factor '*' term | factor '/' term | term
+term:
+    '(' term ')' | NUM | VAR
 
 %%
 //bison -d bison_compiler.y

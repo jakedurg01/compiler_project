@@ -41,39 +41,27 @@
    enum yytokentype {
      NUM = 258,
      SPACE = 259,
-     EOL = 260,
-     IF = 261,
-     ELSE = 262,
-     THEN = 263,
-     END = 264,
-     STOP = 265,
-     REPEAT = 266,
-     VAR = 267,
-     ASSIGN = 268,
-     MUL = 269,
-     ADD = 270,
-     SUB = 271,
-     DIV = 272,
-     EQL = 273
+     IF = 260,
+     ELSE = 261,
+     THEN = 262,
+     END = 263,
+     STOP = 264,
+     REPEAT = 265,
+     VAR = 266,
+     EQL = 267
    };
 #endif
 /* Tokens.  */
 #define NUM 258
 #define SPACE 259
-#define EOL 260
-#define IF 261
-#define ELSE 262
-#define THEN 263
-#define END 264
-#define STOP 265
-#define REPEAT 266
-#define VAR 267
-#define ASSIGN 268
-#define MUL 269
-#define ADD 270
-#define SUB 271
-#define DIV 272
-#define EQL 273
+#define IF 260
+#define ELSE 261
+#define THEN 262
+#define END 263
+#define STOP 264
+#define REPEAT 265
+#define VAR 266
+#define EQL 267
 
 
 
@@ -86,7 +74,7 @@ typedef union YYSTYPE
     char *sval;
 }
 /* Line 1529 of yacc.c.  */
-#line 90 "bison_compiler.tab.h"
+#line 78 "bison_compiler.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -16,18 +16,13 @@ DIGIT [0-9]
 
 
 
-[ \t]+                {printf("Valid Space\n");}
-{ID}                  {printf("Valid Var: %s\n", yytext); return VAR;}
-{DIGIT}*              {printf("Valid Integer: %s\n", yytext); return NUM;}
-";"                   {printf("END OF LINE\n"); return EOL;}
-"if"                  {printf("Valid If\n"); return IF;}
-"repeat"              {printf("Valid repeat\n"); return REPEAT;}
-"end"                 {printf("Valid end\n"); return END;}
-"+"                   {printf("Valid +\n"); return ADD;}
-"-"                   {printf("Valid -\n"); return SUB;}
-"*"                   {printf("Valid *\n"); return MUL;}
-"/"                   {printf("Valid +\n"); return DIV;}
-"="                   {printf("Valid =\n"); return ASSIGN;}
+[ \t]+                   {printf("Valid Space\n");}
+{ID}                     {printf("Valid Var: %s\n", yytext); return VAR;}
+{DIGIT}+                 {printf("Valid Integer: %s\n", yytext);return NUM;}
+"="|"+"|"-"|"/"|"*"|";"  {printf("Valid Symbol: %s\n", yytext); return yytext[0];}
+"if"                     {printf("Valid If\n"); return IF;}
+"repeat"                 {printf("Valid repeat\n"); return REPEAT;}
+"end"                    {printf("Valid end\n"); return END;}
 "=="                  {printf("Valid ==\n"); return EQL;}
 "stop"                {printf("Stopping..."); return STOP;}
 
