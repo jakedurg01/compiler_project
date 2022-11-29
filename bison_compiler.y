@@ -9,32 +9,32 @@ extern FILE* yyin;
 void yyerror(const char *s);
 %}
 %union{
-    int ival;
-    char *sval;
+    long val;
+    char *strVal;
 }
 
-%token <ival> NUM
-%token <sval> SPACE
-%token <sval> IF
-%token <sval> ELSE
-%token <sval> THEN
-%token <sval> END
-%token <sval> STOP
-%token <sval> REPEAT
-%token <sval> VAR
-%token <sval> EQL
+%token NUM SPACE IF ELSE THEN END STOP REPEAT VAR EQL OPEN_PAREN CLOSE_PAREN
+
+%type<val> NUM arithmetic_exp factor term
+%type<strVal> VAR OPEN_PAREN CLOSE_PAREN
 
 %%
 lojban:
     assignment END | assignment lojban{printf("var assignment found\n");}
 assignment:
-    VAR '=' arithmetic_exp ';'
+    VAR '=' arithmetic_exp ';' {printf("Assigning var %s value: %ld", $1, $3)}
 arithmetic_exp:
-    arithmetic_exp '+' factor | arithmetic_exp '-' factor | factor
+    arithmetic_exp '+' factor {$$ = $1 + $3;}
+    | arithmetic_exp '-' factor {$$ = $1 - $3;}
+    | factor {$$ = $1;}
 factor:
-    factor '*' term | factor '/' term | term
+    factor '*' term {$$ = $1 * $3;}
+    | factor '/' term {$$ = $1 / $3;}
+    | term {$$ = $1;}
 term:
-    '(' term ')' | NUM | VAR
+    OPEN_PAREN arithmetic_exp CLOSE_PAREN {$$ = $2; printf("Parenthesis value: %ld\n", $2);}
+    | NUM {$$ = $1;}
+    | VAR
 
 %%
 //bison -d bison_compiler.y

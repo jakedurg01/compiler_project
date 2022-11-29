@@ -9,23 +9,24 @@ extern int yylex();
 %}
 %option noyywrap
 ID $[a-zA-Z][a-zA-Z0-9_]*
-DIGIT [0-9]
+NUM [0-9]
 
 /* Rules */
 %%
 
 
 
-[ \t]+                   {printf("Valid Space\n");}
-{ID}                     {printf("Valid Var: %s\n", yytext); return VAR;}
-{DIGIT}+                 {printf("Valid Integer: %s\n", yytext);return NUM;}
+[ \t]+                   {/*printf("Valid Space\n");*/}
+{ID}                     {printf("Valid Var: %s\n", yytext); yylval.strVal = strdup(yytext); return VAR;}
+{NUM}+                   {printf("Valid Integer: %s\n", yytext); yylval.val = atol(yytext); return NUM;}
 "="|"+"|"-"|"/"|"*"|";"  {printf("Valid Symbol: %s\n", yytext); return yytext[0];}
-"if"                     {printf("Valid If\n"); return IF;}
-"repeat"                 {printf("Valid repeat\n"); return REPEAT;}
-"end"                    {printf("Valid end\n"); return END;}
-"=="                  {printf("Valid ==\n"); return EQL;}
-"stop"                {printf("Stopping..."); return STOP;}
-
+"if"                     {/*printf("Valid If\n"); */return IF;}
+"repeat"                 {/*printf("Valid repeat\n"); */return REPEAT;}
+"end"                    {/*printf("Valid end\n"); */return END;}
+"=="                     {printf("Valid ==\n"); return EQL;}
+"stop"                   {printf("Stopping..."); return STOP;}
+"("                      {return OPEN_PAREN;}
+")"                      {return CLOSE_PAREN;}
 
 
 %%

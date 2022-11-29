@@ -48,7 +48,9 @@
      STOP = 264,
      REPEAT = 265,
      VAR = 266,
-     EQL = 267
+     EQL = 267,
+     OPEN_PAREN = 268,
+     CLOSE_PAREN = 269
    };
 #endif
 /* Tokens.  */
@@ -62,6 +64,8 @@
 #define REPEAT 265
 #define VAR 266
 #define EQL 267
+#define OPEN_PAREN 268
+#define CLOSE_PAREN 269
 
 
 
@@ -70,11 +74,11 @@
 typedef union YYSTYPE
 #line 11 "bison_compiler.y"
 {
-    int ival;
-    char *sval;
+    long val;
+    char *strVal;
 }
 /* Line 1529 of yacc.c.  */
-#line 78 "bison_compiler.tab.h"
+#line 82 "bison_compiler.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
