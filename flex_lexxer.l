@@ -8,7 +8,8 @@ extern int yylex();
 
 %}
 %option noyywrap
-ID $[a-zA-Z][a-zA-Z0-9_]*
+/* Var identifiers must be between 1 and 20 chars*/
+ID $[a-zA-Z0-9_]{1,20}
 NUM [0-9]
 
 /* Rules */
@@ -21,7 +22,7 @@ NUM [0-9]
 {NUM}+                   {printf("Valid Integer: %s\n", yytext); yylval.val = atol(yytext); return NUM;}
 "="|"+"|"-"|"/"|"*"|";"  {printf("Valid Symbol: %s\n", yytext); return yytext[0];}
 "if"                     {/*printf("Valid If\n"); */return IF;}
-"repeat"                 {/*printf("Valid repeat\n"); */return REPEAT;}
+"for"                    {/*printf("Valid repeat\n"); */return FOR;}
 "end"                    {/*printf("Valid end\n"); */return END;}
 "=="                     {printf("Valid ==\n"); return EQL;}
 "stop"                   {printf("Stopping..."); return STOP;}

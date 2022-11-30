@@ -73,7 +73,7 @@
      THEN = 262,
      END = 263,
      STOP = 264,
-     REPEAT = 265,
+     FOR = 265,
      VAR = 266,
      EQL = 267,
      OPEN_PAREN = 268,
@@ -88,7 +88,7 @@
 #define THEN 262
 #define END 263
 #define STOP 264
-#define REPEAT 265
+#define FOR 265
 #define VAR 266
 #define EQL 267
 #define OPEN_PAREN 268
@@ -103,9 +103,40 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
+#define MAX_VARS 100
+#define VAR_NAME_MAX_LEN 21
 extern int yylex();
 extern int yyparse();
 extern FILE* yyin;
+extern FILE* yyout;
+
+
+struct variable_format{
+    char var_name[VAR_NAME_MAX_LEN]; //Max var name length 20 chars
+    long numVal; //Vars only hold integer values
+};
+
+//Max of 100 declared variables
+struct variable_format variables[MAX_VARS];
+
+//Essentially insert index
+int total_vars = 0;
+
+//Searches variables array for a name, returns its index or -1 if it doesn't exist
+int find_var(char name[VAR_NAME_MAX_LEN]){
+    int i = 0;
+    //For each var in variables array...
+    for(i=0;i<total_vars;i++){
+        //Compare to name
+        int comparison = strcmp(variables[i].var_name, name);
+        if(comparison == 0){
+            return i;
+        }
+    }
+    return -1;
+}
+
 
 void yyerror(const char *s);
 
@@ -130,13 +161,13 @@ void yyerror(const char *s);
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 11 "bison_compiler.y"
+#line 42 "bison_compiler.y"
 {
     long val;
     char *strVal;
 }
 /* Line 193 of yacc.c.  */
-#line 140 "bison_compiler.tab.c"
+#line 171 "bison_compiler.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -149,7 +180,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 153 "bison_compiler.tab.c"
+#line 184 "bison_compiler.tab.c"
 
 #ifdef short
 # undef short
@@ -436,8 +467,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    23,    23,    23,    25,    27,    28,    29,    31,    32,
-      33,    35,    36,    37
+       0,    54,    54,    54,    56,    76,    77,    78,    80,    81,
+      82,    84,    85,    86
 };
 #endif
 
@@ -447,9 +478,9 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "NUM", "SPACE", "IF", "ELSE", "THEN",
-  "END", "STOP", "REPEAT", "VAR", "EQL", "OPEN_PAREN", "CLOSE_PAREN",
-  "'='", "';'", "'+'", "'-'", "'*'", "'/'", "$accept", "lojban",
-  "assignment", "arithmetic_exp", "factor", "term", 0
+  "END", "STOP", "FOR", "VAR", "EQL", "OPEN_PAREN", "CLOSE_PAREN", "'='",
+  "';'", "'+'", "'-'", "'*'", "'/'", "$accept", "lojban", "assignment",
+  "arithmetic_exp", "factor", "term", 0
 };
 #endif
 
@@ -1350,58 +1381,88 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 23 "bison_compiler.y"
+#line 54 "bison_compiler.y"
     {printf("var assignment found\n");;}
     break;
 
   case 4:
-#line 25 "bison_compiler.y"
-    {printf("Assigning var %s value: %ld", (yyvsp[(1) - (4)].strVal), (yyvsp[(3) - (4)].val));}
+#line 56 "bison_compiler.y"
+    {
+        printf("Assigning var %s value: %ld\n", (yyvsp[(1) - (4)].strVal), (yyvsp[(3) - (4)].val));
+        int index = find_var((yyvsp[(1) - (4)].strVal));
+        //Var does not exist already
+        if(index == -1){
+            //Check for space
+            if(total_vars >= MAX_VARS-1){
+                printf("Max number of variables reached\n");
+            }else{
+                strcpy(variables[total_vars].var_name, (yyvsp[(1) - (4)].strVal));
+                variables[total_vars].numVal = (yyvsp[(3) - (4)].val);
+                total_vars++;
+            }
+        }else{
+            variables[index].numVal = (yyvsp[(3) - (4)].val); 
+        }
+        printf("Var 0 name: %s\nValue: %ld\n", variables[0].var_name, variables[0].numVal);
+        printf("Var 1 name: %s\nValue: %ld\n", variables[1].var_name, variables[1].numVal);
+    ;}
     break;
 
   case 5:
-#line 27 "bison_compiler.y"
+#line 76 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(1) - (3)].val) + (yyvsp[(3) - (3)].val);;}
     break;
 
   case 6:
-#line 28 "bison_compiler.y"
+#line 77 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(1) - (3)].val) - (yyvsp[(3) - (3)].val);;}
     break;
 
   case 7:
-#line 29 "bison_compiler.y"
+#line 78 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(1) - (1)].val);;}
     break;
 
   case 8:
-#line 31 "bison_compiler.y"
+#line 80 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(1) - (3)].val) * (yyvsp[(3) - (3)].val);;}
     break;
 
   case 9:
-#line 32 "bison_compiler.y"
+#line 81 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(1) - (3)].val) / (yyvsp[(3) - (3)].val);;}
     break;
 
   case 10:
-#line 33 "bison_compiler.y"
+#line 82 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(1) - (1)].val);;}
     break;
 
   case 11:
-#line 35 "bison_compiler.y"
+#line 84 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(2) - (3)].val); printf("Parenthesis value: %ld\n", (yyvsp[(2) - (3)].val));;}
     break;
 
   case 12:
-#line 36 "bison_compiler.y"
+#line 85 "bison_compiler.y"
     {(yyval.val) = (yyvsp[(1) - (1)].val);;}
+    break;
+
+  case 13:
+#line 86 "bison_compiler.y"
+    {
+        int index = find_var((yyvsp[(1) - (1)].strVal));
+        if(index>-1){
+            (yyval.val) = variables[index].numVal;
+        }else{
+            printf("Error -- variable %s not found\n", (yyvsp[(1) - (1)].strVal));
+        }
+    ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1405 "bison_compiler.tab.c"
+#line 1466 "bison_compiler.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1615,7 +1676,7 @@ yyreturn:
 }
 
 
-#line 39 "bison_compiler.y"
+#line 95 "bison_compiler.y"
 
 //bison -d bison_compiler.y
 //flex flex_lexxer.l

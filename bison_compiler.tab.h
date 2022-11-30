@@ -46,7 +46,7 @@
      THEN = 262,
      END = 263,
      STOP = 264,
-     REPEAT = 265,
+     FOR = 265,
      VAR = 266,
      EQL = 267,
      OPEN_PAREN = 268,
@@ -61,7 +61,7 @@
 #define THEN 262
 #define END 263
 #define STOP 264
-#define REPEAT 265
+#define FOR 265
 #define VAR 266
 #define EQL 267
 #define OPEN_PAREN 268
@@ -72,7 +72,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 11 "bison_compiler.y"
+#line 42 "bison_compiler.y"
 {
     long val;
     char *strVal;
