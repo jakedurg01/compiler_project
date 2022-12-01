@@ -1,66 +1,67 @@
+%option noyywrap
 %{
 
  /* definitions */  
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "symboltable.h"
 #include "bison_compiler.tab.h"
 
-extern int yylex();    
-
+extern FILE *yyin;
+extern FILE *yyout;
+int line_num = 1;
 %}
-%option noyywrap
-/* Var identifiers must be between 1 and 20 chars*/
-ID $[a-zA-Z0-9_]{1,20}
+
+/* Variable identifiers must be between 1 and 20 chars*/
+VARIABLE $[a-zA-Z0-9_]{1,20}
 NUM [0-9]
+
 
 /* Rules */
 %%
 
 
 
-[ \t]+                   {/*printf("Valid Space\n");*/}
-{ID}                     {printf("Valid Var: %s\n", yytext); yylval.strVal = strdup(yytext); return VAR;}
-{NUM}+                   {printf("Valid Integer: %s\n", yytext); yylval.val = atol(yytext); return NUM;}
-"="|"+"|"-"|"/"|"*"|";"  {printf("Valid Symbol: %s\n", yytext); return yytext[0];}
-"if"                     {/*printf("Valid If\n"); */return IF;}
-"for"                    {/*printf("Valid repeat\n"); */return FOR;}
-"end"                    {/*printf("Valid end\n"); */return END;}
-"=="                     {printf("Valid ==\n"); return EQL;}
-"stop"                   {printf("Stopping..."); return STOP;}
-"("                      {return OPEN_PAREN;}
-")"                      {return CLOSE_PAREN;}
+[ \t]+                          {}
+{VARIABLE}                      {
+                                    printf("Valid Var: %s\n", yytext);
+                                    printf("Line Num:%d\n", line_num); 
+                                    char* temp = yytext;
+                                    printf("TESTING PRINT\n");
+                                    printf("TESTING TEMP PRINT %s\n", temp);
+                                    search(yytext);
+                                    printf("AFTER SEARCH\n");
+                                    put(temp, line_num);
+                                    FILE* outFile = fopen("table_dump.txt", "w");
+                                    symtab_dump(outFile);
+                                    fclose(outFile);
+                                    // yylval.symbol_table_entry = search(yytext);
+                                    return VAR;
+                                }
+{NUM}+                          {printf("Valid Integer: %s\n", yytext); yylval.val = atol(yytext); return NUM;}
+"+"                             {return ADD;}
+"-"                             {return SUB;}
+"*"                             {return MULT;}
+"/"                             {return DIV;}
+"=="                            {return EQL;}
+"="                             {return ASGN;}
+">"                             {return GT;}
+"<"                             {return LT;}
+"{"                             {return OPEN_BRACKET;}
+"}"                             {return CLOSE_BRACKET;}
+"continue"                      {return CONTINUE;}
+"break"                         {return BREAK;}
+"if"                            {return IF;}
+"while"                         {return WHILE;}
+";"                             {return SEMI_COLON;}
+"("                             {return OPEN_PAREN;}
+")"                             {return CLOSE_PAREN;}
+"\n"                            {line_num+=1; return NL;}
 
 
 %%
 
-/* [ \t]+                {printf("Valid Space\n");}
-{ID}                  {printf("Valid Var: %s\n", yytext); return VAR;}
-{DIGIT}*              {printf("Valid Integer: %s\n", yytext); yylval = atoi(yytext); return NUMBER;}
-";\n"                 {printf("END OF LINE\n"); return EOL;}
-"if"                  {printf("Valid If\n"); return IF;}
-"repeat"              {printf("Valid repeat\n"); return REPEAT;}
-"end"                 {printf("Valid end\n"); return END;}
-"+"                   {printf("Valid +\n"); return ADD;}
-"-"                   {printf("Valid -\n"); return SUB;}
-"*"                   {printf("Valid *\n"); return MUL;}
-"/"                   {printf("Valid +\n"); return DIV;}
-"="                   {printf("Valid =\n"); return ASSIGN;}
-"=="                  {printf("Valid ==\n"); return EQL;}
-"stop"                {printf("Stopping..."); return STOP;} */
-
-/* [ \t]+                {printf("Valid Space\n");}
-{ID}                  {printf("Valid Var: %s\n", yytext);}
-{DIGIT}*              {printf("Valid Integer: %s\n", yytext); yylval = atoi(yytext);}
-";\n"                 {printf("END OF LINE\n"); }
-"if"                  {printf("Valid If\n"); }
-"repeat"              {printf("Valid repeat\n"); }
-"end"                 {printf("Valid end\n"); }
-"+"                   {printf("Valid +\n"); }
-"-"                   {printf("Valid -\n");}
-"*"                   {printf("Valid *\n");}
-"/"                   {printf("Valid +\n");}
-"="                   {printf("Valid =\n");}
-"=="                  {printf("Valid ==\n");}
-"stop"                {printf("Stopping...");} */
 /* int main() {
 
 
