@@ -1,3 +1,11 @@
-$test_var = ( 3 - 4 + 5 ) / 3 * 5;
-$vartest = 8 * 7;
-$vartest = $test_var +10;
+if (5 == 9){
+    $test = 10;
+    $jake = 32;
+    $test_2 = 23 * 5;
+}
+
+while ($test <4) {
+    $jake = 2 * $test;
+    $test = $test + 1;
+}
+end

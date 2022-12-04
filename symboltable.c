@@ -28,8 +28,8 @@ void put(char* name, int line_num){
     while((entry != NULL) && (strcmp(name, entry->var_name) != 0)){
         entry = entry->next;
     }
-    //Found symbol in table
-    if(entry != NULL){
+    //Found symbol in table and same scope
+    if(entry != NULL && entry->scope == current_scope){
         //First note the line number
         Reference_Node *refs = entry->references;
         while( refs != NULL && refs->next != NULL){
@@ -41,24 +41,24 @@ void put(char* name, int line_num){
         refs->next = new_node;
         //Update scope 
         entry->scope = current_scope;
+       
     //Else create a new var
     }else{
         //Malloc size of new variable
         Variable_Node* new_entry = malloc(sizeof(Variable_Node));
         //Copy in name
         strcpy(new_entry->var_name, name);
-        printf("VAR NAME INSIDE PUT :%s\n", new_entry->var_name);
         //Update Scope
         new_entry->scope = current_scope;
-        printf("after new scope");
         //Update dec line
         new_entry->declaration_line = line_num;
         //Add a reference node
         Reference_Node* new_node = malloc(sizeof(Reference_Node));
         new_node->line = line_num;
-        new_node->next = NULL;
         new_entry->references = new_node;
 
+        //Accounts for new var of same name in an inner scope -- sets to null otherwise
+        new_entry->next = hash_table[hashed_index];
         //Place into table
         hash_table[hashed_index] = new_entry;
 
@@ -87,6 +87,17 @@ Variable_Node* search_with_scope(char* name, int scope){
 
 void hide_scope(){
     if(current_scope>0){
+        int i;
+        for(i=0; i < TABLE_SIZE; i++){
+            Variable_Node* v = hash_table[i];
+            //If moving back a scope, wipe out vars from the inner scope
+            while(v != NULL){
+                if(v->scope==current_scope){
+                    v = v->next;
+                }
+            }
+                
+        }
         current_scope--;
     }
 }
@@ -96,7 +107,7 @@ void increase_scope(){
 }
 
 void var_to_file(FILE *output, Variable_Node* node){
-    fprintf(output, "|%-14s|%9ld| ", node->var_name, node->value);
+    fprintf(output, "|%-16s|%9ld| ", node->var_name, node->value);
     Reference_Node* refs = node->references;
     while(refs != NULL){
         fprintf(output, "%d ", refs->line);
@@ -109,7 +120,7 @@ void symtab_dump(FILE *output){
     fprintf(output, "|      NAME      |  VALUE  | Line Nums\n");
     fprintf(output, "----------------------------------------------------\n");
     int i = 0;
-    for(i;i<TABLE_SIZE; i++){
+    for(i=0;i<TABLE_SIZE; i++){
         if(hash_table[i] != NULL){
             Variable_Node* current = hash_table[i];
             while(current != NULL){

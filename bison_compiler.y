@@ -1,74 +1,18 @@
 %{
-#include "symboltable.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "symboltable.h"
+#include "syntax_tree.h"
 
-void yyerror(const char* msg) {
-      fprintf(stderr, "%s\n", msg);
-   }
 int yylex();
 extern FILE* yyin;
 extern FILE* yyout;
 extern int line_num;
-//Nodes for locating the line of usage
-// typedef struct Reference_Node{
-//     int line;
-//     struct Reference_Node* next;
-// }Reference_Node;
-
-
-
-// //Essentially Symbol Table Nodes
-// typedef struct Variable_Node{
-//     char var_name[VAR_NAME_MAX_LEN]; //Max var name length 20 chars
-//     long value; //Vars only hold integer values
-//     int declaration_line; //Line on which var is declared/initalized
-//     Reference_Node* references; //Lines that reference this varialbe
-
-// }Variable_Node;
-
-
-// //Max of 100 declared variables
-// Variable_Node variables[MAX_VARS];
-
-// //Essentially insert index
-// int total_vars = 0;
-
-
-
-// int insert_reference(int var_index, int line_num){
-//     Reference_Node new_node = {.line = line_num, .next = NULL};
-//     Reference_Node* cursor = variables[var_index].references;
-//     //If this is not the first reference in the list
-//     if(cursor != NULL){
-//         //Find final node
-//         while(cursor->next != NULL){
-//             cursor = cursor->next;
-//         }
-//         cursor->next = &new_node;
-//         return 0;
-//     //Otherwise is first reference
-//     }else{
-//         variables[var_index].references = &new_node;
-//         return 0;
-//     }
-//     return 0;
-// }
-
-// //Searches variables array for a name, returns its index or -1 if it doesn't exist
-// int find_var(char name[VAR_NAME_MAX_LEN]){
-//     int i = 0;
-//     //For each var in variables array...
-//     for(i=0;i<total_vars;i++){
-//         //Compare to name
-//         int comparison = strcmp(variables[i].var_name, name);
-//         if(comparison == 0){
-//             return i;
-//         }
-//     }
-//     return -1;
-// }
+void yyerror(const char* msg) {
+      fprintf(stderr, "[ERROR] %s while processing line %d of the input file\n", msg, line_num);
+   }
 
 
 void yyerror();
@@ -77,18 +21,22 @@ void yyerror();
 %union{
     long val;
     char *strVal;
-    // struct Variable_Node *symbol_table_entry;
+    struct Variable_Node *symbol_table_entry;
+    struct AST_Node *ast_node;
 }
 
-%token NUM IF WHILE VAR EQL OPEN_PAREN CLOSE_PAREN ADD SUB MULT DIV ASGN GT LT OPEN_BRACKET CLOSE_BRACKET SEMI_COLON NL CONTINUE BREAK
+%token NUM IF WHILE VAR EQL OPEN_PAREN CLOSE_PAREN ADD SUB MULT DIV ASGN GT LT OPEN_BRACKET CLOSE_BRACKET SEMI_COLON NL CONTINUE BREAK END
 
 %type<val> NUM arithmetic_exp factor term condition
-/* %type<symbol_table_entry> VAR */
+%type<symbol_table_entry> VAR
+%start lojban
 
 %%
 lojban: 
-    statement NL lojban {printf("var assignment found\n");}
-    | /*Lambda*/
+    statements END {printf("Stopping...\n");Node_Val test_val; test_val.num_val=10 ; AST_Node* test = new_ast_num(0, test_val );return 0;}
+statements:
+    statement statements {}
+    | statement {}
 statement:
     assignment_statement {}
     | if_statement {}
@@ -96,29 +44,28 @@ statement:
     | CONTINUE {}
     | BREAK {}
 if_statement:
-    IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET lojban CLOSE_BRACKET {}
+    IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET {}
 while_statement:
-    WHILE OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET lojban CLOSE_BRACKET {}
+    WHILE OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET {}
 assignment_statement:
-    VAR ASGN arithmetic_exp SEMI_COLON
+    VAR ASGN arithmetic_exp SEMI_COLON {$1->value = $3; printf("Assigning %s value %ld\n", $1->var_name, $3);}
 arithmetic_exp:
-    arithmetic_exp ADD factor {}
-    | arithmetic_exp SUB factor {}
-    | factor {}
+    arithmetic_exp ADD factor {$$ = $1 + $3;}
+    | arithmetic_exp SUB factor {$$ = $1 - $3;}
+    | factor {$$ = $1;}
 factor:
-    factor MULT term {}
-    | factor DIV term {}
-    | term {}
+    factor MULT term {$$ = $1 * $3;}
+    | factor DIV term {$$ = $1 / $3;}
+    | term {$$ = $1;}
 term:
-    OPEN_PAREN arithmetic_exp CLOSE_PAREN {}
+    OPEN_PAREN arithmetic_exp CLOSE_PAREN {$$ = $2;}
     | NUM {}
-    | VAR {}
+    | VAR {$$=$1->value;}
 condition:
-    term EQL term {}
-    | term GT term {}
-    | term LT term {}
-    | NUM {}
-    | VAR {}
+    term EQL term {if ($1 == $3){$$=1;}else{$$=0;}}
+    | term GT term {if ($1 > $3){$$=1;}else{$$=0;}}
+    | term LT term {if ($1 < $3){$$=1;}else{$$=0;}}
+    | term {if ($1 != 0){$$=1;}else{$$=0;}}
 
 %%
 //bison -d bison_compiler.y
@@ -147,7 +94,3 @@ int main(int in, char** args) {
     return 0;
 }
 
-/* void yyerror() {
-  printf("Parser error at line %d\n", line_number);
-  exit(-1);
-} */

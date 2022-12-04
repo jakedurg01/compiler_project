@@ -7,6 +7,7 @@
 #include <string.h>
 #include "symboltable.h"
 #include "bison_compiler.tab.h"
+#include "syntax_tree.h"
 
 extern FILE *yyin;
 extern FILE *yyout;
@@ -23,20 +24,10 @@ NUM [0-9]
 
 
 
-[ \t]+                          {}
 {VARIABLE}                      {
                                     printf("Valid Var: %s\n", yytext);
-                                    printf("Line Num:%d\n", line_num); 
-                                    char* temp = yytext;
-                                    printf("TESTING PRINT\n");
-                                    printf("TESTING TEMP PRINT %s\n", temp);
-                                    search(yytext);
-                                    printf("AFTER SEARCH\n");
-                                    put(temp, line_num);
-                                    FILE* outFile = fopen("table_dump.txt", "w");
-                                    symtab_dump(outFile);
-                                    fclose(outFile);
-                                    // yylval.symbol_table_entry = search(yytext);
+                                    put(yytext, line_num);
+                                    yylval.symbol_table_entry = search(yytext);
                                     return VAR;
                                 }
 {NUM}+                          {printf("Valid Integer: %s\n", yytext); yylval.val = atol(yytext); return NUM;}
@@ -45,7 +36,7 @@ NUM [0-9]
 "*"                             {return MULT;}
 "/"                             {return DIV;}
 "=="                            {return EQL;}
-"="                             {return ASGN;}
+"="                             {printf("Assignment Equals\n");return ASGN;}
 ">"                             {return GT;}
 "<"                             {return LT;}
 "{"                             {return OPEN_BRACKET;}
@@ -57,7 +48,10 @@ NUM [0-9]
 ";"                             {return SEMI_COLON;}
 "("                             {return OPEN_PAREN;}
 ")"                             {return CLOSE_PAREN;}
-"\n"                            {line_num+=1; return NL;}
+"end"                           {return END;}
+"\n"                            {line_num+=1;}
+[ \t]+
+.                               {printf("skipping character: \"%s\"", yytext);}
 
 
 %%

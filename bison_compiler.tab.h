@@ -73,7 +73,8 @@ extern int yydebug;
     SEMI_COLON = 274,              /* SEMI_COLON  */
     NL = 275,                      /* NL  */
     CONTINUE = 276,                /* CONTINUE  */
-    BREAK = 277                    /* BREAK  */
+    BREAK = 277,                   /* BREAK  */
+    END = 278                      /* END  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -82,13 +83,14 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 77 "bison_compiler.y"
+#line 21 "bison_compiler.y"
 
     long val;
     char *strVal;
-    // struct Variable_Node *symbol_table_entry;
+    struct Variable_Node *symbol_table_entry;
+    struct AST_Node *ast_node;
 
-#line 92 "bison_compiler.tab.h"
+#line 94 "bison_compiler.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
