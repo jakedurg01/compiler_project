@@ -1,11 +1,4 @@
-if (5 == 9){
-    $test = 10;
-    $jake = 32;
-    $test_2 = 23 * 5;
-}
-
-while ($test <4) {
-    $jake = 2 * $test;
-    $test = $test + 1;
-}
+$jake = 500;
+$marriah = 1000;
+$both = 300 + 200 * (10 / 5);
 end

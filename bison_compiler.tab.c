@@ -537,9 +537,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    36,    36,    38,    39,    41,    42,    43,    44,    45,
-      47,    49,    51,    53,    54,    55,    57,    58,    59,    61,
-      62,    63,    65,    66,    67,    68
+       0,    37,    37,    43,    46,    48,    49,    50,    51,    52,
+      54,    56,    58,    62,    65,    68,    70,    73,    76,    78,
+      79,    84,    90,    91,    92,    93
 };
 #endif
 
@@ -1129,151 +1129,175 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* lojban: statements END  */
-#line 36 "bison_compiler.y"
-                   {printf("Stopping...\n");Node_Val test_val; test_val.num_val=10 ; AST_Node* test = new_ast_num(0, test_val );return 0;}
-#line 1135 "bison_compiler.tab.c"
+#line 37 "bison_compiler.y"
+                   {
+        //Imported from syntax_tree.h
+        program_root = new_ast_node(ROOT_NODE, (yyvsp[-1].ast_node), NULL);
+        return 0;
+    }
+#line 1139 "bison_compiler.tab.c"
     break;
 
   case 3: /* statements: statement statements  */
-#line 38 "bison_compiler.y"
-                         {}
-#line 1141 "bison_compiler.tab.c"
-    break;
-
-  case 4: /* statements: statement  */
-#line 39 "bison_compiler.y"
-                {}
+#line 43 "bison_compiler.y"
+                         {
+        (yyval.ast_node) = new_ast_node(ROOT_NODE, (yyvsp[-1].ast_node), (yyvsp[0].ast_node));
+    }
 #line 1147 "bison_compiler.tab.c"
     break;
 
-  case 5: /* statement: assignment_statement  */
-#line 41 "bison_compiler.y"
-                         {}
+  case 4: /* statements: statement  */
+#line 46 "bison_compiler.y"
+                {}
 #line 1153 "bison_compiler.tab.c"
     break;
 
-  case 6: /* statement: if_statement  */
-#line 42 "bison_compiler.y"
-                   {}
+  case 5: /* statement: assignment_statement  */
+#line 48 "bison_compiler.y"
+                         {(yyval.ast_node)=(yyvsp[0].ast_node);}
 #line 1159 "bison_compiler.tab.c"
     break;
 
-  case 7: /* statement: while_statement  */
-#line 43 "bison_compiler.y"
-                      {}
+  case 6: /* statement: if_statement  */
+#line 49 "bison_compiler.y"
+                   {(yyval.ast_node)=(yyvsp[0].ast_node);}
 #line 1165 "bison_compiler.tab.c"
     break;
 
-  case 8: /* statement: CONTINUE  */
-#line 44 "bison_compiler.y"
-               {}
+  case 7: /* statement: while_statement  */
+#line 50 "bison_compiler.y"
+                      {(yyval.ast_node)=(yyvsp[0].ast_node);}
 #line 1171 "bison_compiler.tab.c"
     break;
 
-  case 9: /* statement: BREAK  */
-#line 45 "bison_compiler.y"
-            {}
+  case 8: /* statement: CONTINUE  */
+#line 51 "bison_compiler.y"
+               {}
 #line 1177 "bison_compiler.tab.c"
     break;
 
-  case 10: /* if_statement: IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET  */
-#line 47 "bison_compiler.y"
-                                                                              {}
+  case 9: /* statement: BREAK  */
+#line 52 "bison_compiler.y"
+            {}
 #line 1183 "bison_compiler.tab.c"
     break;
 
-  case 11: /* while_statement: WHILE OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET  */
-#line 49 "bison_compiler.y"
-                                                                                 {}
+  case 10: /* if_statement: IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET  */
+#line 54 "bison_compiler.y"
+                                                                              {}
 #line 1189 "bison_compiler.tab.c"
     break;
 
-  case 12: /* assignment_statement: VAR ASGN arithmetic_exp SEMI_COLON  */
-#line 51 "bison_compiler.y"
-                                       {(yyvsp[-3].symbol_table_entry)->value = (yyvsp[-1].val); printf("Assigning %s value %ld\n", (yyvsp[-3].symbol_table_entry)->var_name, (yyvsp[-1].val));}
+  case 11: /* while_statement: WHILE OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET  */
+#line 56 "bison_compiler.y"
+                                                                                 {}
 #line 1195 "bison_compiler.tab.c"
     break;
 
+  case 12: /* assignment_statement: VAR ASGN arithmetic_exp SEMI_COLON  */
+#line 58 "bison_compiler.y"
+                                       {
+        (yyval.ast_node) = (AST_Node*) new_ast_assign((yyvsp[-3].symbol_table_entry), (yyvsp[-1].ast_node));
+    }
+#line 1203 "bison_compiler.tab.c"
+    break;
+
   case 13: /* arithmetic_exp: arithmetic_exp ADD factor  */
-#line 53 "bison_compiler.y"
-                              {(yyval.val) = (yyvsp[-2].val) + (yyvsp[0].val);}
-#line 1201 "bison_compiler.tab.c"
+#line 62 "bison_compiler.y"
+                              {
+        (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(ADDITION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
+    }
+#line 1211 "bison_compiler.tab.c"
     break;
 
   case 14: /* arithmetic_exp: arithmetic_exp SUB factor  */
-#line 54 "bison_compiler.y"
-                                {(yyval.val) = (yyvsp[-2].val) - (yyvsp[0].val);}
-#line 1207 "bison_compiler.tab.c"
-    break;
-
-  case 15: /* arithmetic_exp: factor  */
-#line 55 "bison_compiler.y"
-             {(yyval.val) = (yyvsp[0].val);}
-#line 1213 "bison_compiler.tab.c"
-    break;
-
-  case 16: /* factor: factor MULT term  */
-#line 57 "bison_compiler.y"
-                     {(yyval.val) = (yyvsp[-2].val) * (yyvsp[0].val);}
+#line 65 "bison_compiler.y"
+                                {
+        (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(SUBTRACTION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
+    }
 #line 1219 "bison_compiler.tab.c"
     break;
 
-  case 17: /* factor: factor DIV term  */
-#line 58 "bison_compiler.y"
-                      {(yyval.val) = (yyvsp[-2].val) / (yyvsp[0].val);}
+  case 15: /* arithmetic_exp: factor  */
+#line 68 "bison_compiler.y"
+             {(yyval.ast_node) = (yyvsp[0].ast_node);}
 #line 1225 "bison_compiler.tab.c"
     break;
 
+  case 16: /* factor: factor MULT term  */
+#line 70 "bison_compiler.y"
+                     {
+        (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(MULTIPLICATION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
+    }
+#line 1233 "bison_compiler.tab.c"
+    break;
+
+  case 17: /* factor: factor DIV term  */
+#line 73 "bison_compiler.y"
+                      {
+        (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(DIVISION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
+    }
+#line 1241 "bison_compiler.tab.c"
+    break;
+
   case 18: /* factor: term  */
-#line 59 "bison_compiler.y"
-           {(yyval.val) = (yyvsp[0].val);}
-#line 1231 "bison_compiler.tab.c"
+#line 76 "bison_compiler.y"
+           {(yyval.ast_node) = (yyvsp[0].ast_node);}
+#line 1247 "bison_compiler.tab.c"
     break;
 
   case 19: /* term: OPEN_PAREN arithmetic_exp CLOSE_PAREN  */
-#line 61 "bison_compiler.y"
-                                          {(yyval.val) = (yyvsp[-1].val);}
-#line 1237 "bison_compiler.tab.c"
+#line 78 "bison_compiler.y"
+                                          {(yyval.ast_node) = (yyvsp[-1].ast_node);}
+#line 1253 "bison_compiler.tab.c"
     break;
 
   case 20: /* term: NUM  */
-#line 62 "bison_compiler.y"
-          {}
-#line 1243 "bison_compiler.tab.c"
+#line 79 "bison_compiler.y"
+          {
+        AST_Node* val_node = (AST_Node*) new_ast_num(0, (yyvsp[0].val), NULL);
+        AST_Node* rtn_node = (AST_Node*) new_ast_arithmetic(NONE, val_node, NULL);
+        (yyval.ast_node)=rtn_node;
+    }
+#line 1263 "bison_compiler.tab.c"
     break;
 
   case 21: /* term: VAR  */
-#line 63 "bison_compiler.y"
-          {(yyval.val)=(yyvsp[0].symbol_table_entry)->value;}
-#line 1249 "bison_compiler.tab.c"
-    break;
-
-  case 22: /* condition: term EQL term  */
-#line 65 "bison_compiler.y"
-                  {if ((yyvsp[-2].val) == (yyvsp[0].val)){(yyval.val)=1;}else{(yyval.val)=0;}}
-#line 1255 "bison_compiler.tab.c"
-    break;
-
-  case 23: /* condition: term GT term  */
-#line 66 "bison_compiler.y"
-                   {if ((yyvsp[-2].val) > (yyvsp[0].val)){(yyval.val)=1;}else{(yyval.val)=0;}}
-#line 1261 "bison_compiler.tab.c"
-    break;
-
-  case 24: /* condition: term LT term  */
-#line 67 "bison_compiler.y"
-                   {if ((yyvsp[-2].val) < (yyvsp[0].val)){(yyval.val)=1;}else{(yyval.val)=0;}}
-#line 1267 "bison_compiler.tab.c"
-    break;
-
-  case 25: /* condition: term  */
-#line 68 "bison_compiler.y"
-           {if ((yyvsp[0].val) != 0){(yyval.val)=1;}else{(yyval.val)=0;}}
+#line 84 "bison_compiler.y"
+          {
+        AST_Node* val_node = (AST_Node*) new_ast_num(1, 0, (yyvsp[0].symbol_table_entry));
+        AST_Node* rtn_node = (AST_Node*) new_ast_arithmetic(NONE, val_node, NULL);
+        (yyval.ast_node)=rtn_node;
+    }
 #line 1273 "bison_compiler.tab.c"
     break;
 
+  case 22: /* condition: term EQL term  */
+#line 90 "bison_compiler.y"
+                  {}
+#line 1279 "bison_compiler.tab.c"
+    break;
 
-#line 1277 "bison_compiler.tab.c"
+  case 23: /* condition: term GT term  */
+#line 91 "bison_compiler.y"
+                   {}
+#line 1285 "bison_compiler.tab.c"
+    break;
+
+  case 24: /* condition: term LT term  */
+#line 92 "bison_compiler.y"
+                   {}
+#line 1291 "bison_compiler.tab.c"
+    break;
+
+  case 25: /* condition: term  */
+#line 93 "bison_compiler.y"
+           {}
+#line 1297 "bison_compiler.tab.c"
+    break;
+
+
+#line 1301 "bison_compiler.tab.c"
 
       default: break;
     }
@@ -1466,7 +1490,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 70 "bison_compiler.y"
+#line 95 "bison_compiler.y"
 
 //bison -d bison_compiler.y
 //flex flex_lexxer.l
@@ -1486,6 +1510,7 @@ int main(int in, char** args) {
 
     // Parse through the input:
     yyparse();
+    ast_traversal(program_root);
     fclose(yyin);
 
     yyout= fopen("table_dump.txt", "w");

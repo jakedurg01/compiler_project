@@ -1,4 +1,5 @@
 #include "syntax_tree.h"
+#include "symboltable.h"
 #include <stdlib.h>
 
 AST_Node *new_ast_node(AST_Node_Type type, AST_Node *left, AST_Node* right){
@@ -56,14 +57,16 @@ AST_Node *new_ast_condition(Conditional_Op operand, AST_Node* left_val, AST_Node
     new_node->op = operand;
     new_node->left = left_val;
     new_node->right = right_val;
+    new_node->val = NULL;
     return (struct AST_Node*) new_node;
 }
 
-AST_Node *new_ast_num(int value_type, Node_Val val){
+AST_Node *new_ast_num(int var_flag, long val, Variable_Node* entry){
     AST_Node_Num *new_node = (AST_Node_Num*) malloc(sizeof(AST_Node_Num));
     new_node->type = NUM_NODE;
-    new_node->value_type = value_type;
+    new_node->var_flag = var_flag;
     new_node->val = val;
+    new_node->entry = entry;
     return (struct AST_Node*) new_node;
 }
 
@@ -86,7 +89,7 @@ void ast_print_node(AST_Node *node){
             break;
         case NUM_NODE:
             temp_num = (struct AST_Node_Num*) node;
-            printf("Num Node with type %d and value %ld\n", temp_num->value_type, temp_num->val.num_val);
+            printf("Num Node with value %ld\n", temp_num->val);
             break;
         case IF_NODE:
             printf("If node\n");
@@ -114,15 +117,59 @@ void ast_print_node(AST_Node *node){
 }
 
 void ast_traversal(AST_Node *node){
-    int i;
 
     if(node == NULL){
         return;
     }
     enum AST_Node_Type type = node->type;
-    if(type == ROOT_NODE || type == ARITHM_NODE || type == CONDITION_NODE){
+    if(type == ROOT_NODE ||  type == CONDITION_NODE){
         ast_traversal(node->left);
         ast_traversal(node->right);
+    }else if(type==ARITHM_NODE){
+        AST_Node_Arithmetic *temp = (struct AST_Node_Arithmetic*) node;
+        ast_traversal(node->left);
+        ast_traversal(node->right);
+        if(temp->op == ADDITION){
+            //If no right node, we are at bottom of tree
+            if(temp->right == NULL){
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val;
+            }else{
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val + ((struct AST_Node_Arithmetic*) temp->right)->val;
+            }
+        }else if(temp->op == SUBTRACTION){
+             //If no right node, we are at bottom of tree
+            if(temp->right == NULL){
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val;
+            }else{
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val - ((struct AST_Node_Arithmetic*) temp->right)->val;
+            }
+        }else if (temp->op == MULTIPLICATION){
+            if(temp->right == NULL){
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val;
+            }else{
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val * ((struct AST_Node_Arithmetic*) temp->right)->val;
+            }
+        }else if(temp->op == DIVISION){
+            if(temp->right == NULL){
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val;
+            }else{
+                temp->val = ((struct AST_Node_Arithmetic*) temp->left)->val / ((struct AST_Node_Arithmetic*) temp->right)->val;
+            }
+        }else if(temp->op == NONE){
+            //We know left node will have reference to a Node_Num type
+            AST_Node_Num* node_num = (struct AST_Node_Num*) temp->left;
+            if(node_num->var_flag == 1){
+                printf("traversing var flag high\n");
+                //Get val from variable
+                temp->val = node_num->entry->value;
+            }else{
+                printf("traversing var flag low\n");
+                //Literal stored in num node
+                temp->val = node_num->val;
+            }
+        }else{
+            printf("ERROR temp op not invalid/not found\n");
+        }
     }
     else if(type == IF_NODE){
         AST_Node_If *temp = (struct AST_Node_If*) node;
@@ -133,6 +180,13 @@ void ast_traversal(AST_Node *node){
     else if(type == ASSIGN_NODE){
         AST_Node_Assign *temp = (struct AST_Node_Assign*) node;
         ast_traversal(temp->assign_val);
+        if(temp->assign_val->type == ARITHM_NODE){
+            temp->entry->value = ((struct AST_Node_Arithmetic*) temp->assign_val)->val;
+        }else if(temp->assign_val->type == NUM_NODE){
+            temp->entry->value = ((struct AST_Node_Num*) temp->assign_val)->val;
+        }else{
+            printf("Error, neither Arithmetic nor NUM\n");
+        }
     }
     else if(type == WHILE_NODE){
         AST_Node_While *temp = (struct AST_Node_While*) node;
@@ -144,12 +198,12 @@ void ast_traversal(AST_Node *node){
 }
 
 // int main(){
-//     Node_Val val1, val2;
-//     val1.num_val = 15;
-//     val2.num_val = 20;
-//     AST_Node *const_node1 = new_ast_num(0, val1);
-//     AST_Node *const_node2 = new_ast_num(0, val2);
-//     AST_Node *condition_node = new_ast_condition(LT, const_node1, const_node2);
+//     long val1, val2;
+//     val1 = 15;
+//     val2 = 20;
+//     AST_Node *const_node1 = new_ast_num( val1);
+//     AST_Node *const_node2 = new_ast_num( val2);
+//     AST_Node *condition_node = new_ast_condition(LESS_THAN, const_node1, const_node2);
 //     AST_Node *root_node = new_ast_node(ROOT_NODE, NULL, NULL);
 //     AST_Node *if_node = new_ast_if(condition_node, root_node, 0);
 //     ast_traversal(if_node);

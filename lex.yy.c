@@ -789,7 +789,7 @@ case 1:
 YY_RULE_SETUP
 #line 27 "flex_lexxer.l"
 {
-                                    printf("Valid Var: %s\n", yytext);
+                                    // printf("Valid Var: %s\n", yytext);
                                     put(yytext, line_num);
                                     yylval.symbol_table_entry = search(yytext);
                                     return VAR;
@@ -798,7 +798,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 33 "flex_lexxer.l"
-{printf("Valid Integer: %s\n", yytext); yylval.val = atol(yytext); return NUM;}
+{yylval.val = atol(yytext); return NUM;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
@@ -828,7 +828,7 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 39 "flex_lexxer.l"
-{printf("Assignment Equals\n");return ASGN;}
+{/*printf("Assignment Equals\n");*/return ASGN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP

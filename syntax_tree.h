@@ -14,18 +14,18 @@ typedef enum AST_Node_Type {
 }AST_Node_Type;
 
 typedef enum Arithmetic_Op{
-    ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION
+    ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, NONE
 }Arithmetic_Op;
 
 typedef enum Conditional_Op{
     GREATER_THAN, LESS_THAN, EQUAL_TO
 }Conditional_Op;
 
-typedef union Node_Val{
-    long num_val; //variable values
-    char c_val; //For single chars (mostly operators)
-    char* str_val; //Keywords
-}Node_Val;
+// typedef union Node_Val{
+//     long num_val; //variable values
+//     char c_val; //For single chars (mostly operators)
+//     char* str_val; //Keywords
+// }Node_Val;
 
 typedef struct AST_Node {
     enum AST_Node_Type type;
@@ -62,26 +62,34 @@ typedef struct AST_Node_Arithmetic{
     struct AST_Node *left;
     struct AST_Node *right;
     enum Arithmetic_Op op;
+    long val;
 }AST_Node_Arithmetic;
 
 typedef struct AST_Node_Condition{
     enum AST_Node_Type type;
     struct AST_Node *left;
     struct AST_Node *right; 
-    enum Conditional_Op op;   
+    enum Conditional_Op op;
+    int val;  
 }AST_Node_Condition;
 
 typedef struct AST_Node_Num{
     enum AST_Node_Type type;
-    int value_type;
-    Node_Val val;
+    int var_flag;
+    long val;
+    Variable_Node* entry;
+
 }AST_Node_Num;
 
 AST_Node *new_ast_node(AST_Node_Type type, AST_Node *left, AST_Node* right);
 AST_Node *new_ast_assign(Variable_Node* entry, AST_Node *val);
-AST_Node *new_ast_if_node(AST_Node *condition, AST_Node *if_branch, AST_Node *else_branch);
+AST_Node *new_ast_if(AST_Node *condition, AST_Node *if_branch, AST_Node *else_branch);
 AST_Node *new_ast_while(AST_Node *condition, AST_Node *while_statements);
 AST_Node *new_ast_control(int statement_type);
 AST_Node *new_ast_arithmetic(Arithmetic_Op operand, AST_Node* left_val, AST_Node* right_val);
 AST_Node *new_ast_condition(Conditional_Op operand, AST_Node* left_val, AST_Node* right_val);
-AST_Node *new_ast_num(int value_type, Node_Val val);
+AST_Node *new_ast_num(int var_flag, long val, Variable_Node* entry);
+
+void ast_traversal(AST_Node *node);
+
+static AST_Node* program_root;

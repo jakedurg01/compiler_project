@@ -25,18 +25,18 @@ NUM [0-9]
 
 
 {VARIABLE}                      {
-                                    printf("Valid Var: %s\n", yytext);
+                                    // printf("Valid Var: %s\n", yytext);
                                     put(yytext, line_num);
                                     yylval.symbol_table_entry = search(yytext);
                                     return VAR;
                                 }
-{NUM}+                          {printf("Valid Integer: %s\n", yytext); yylval.val = atol(yytext); return NUM;}
+{NUM}+                          {yylval.val = atol(yytext); return NUM;}
 "+"                             {return ADD;}
 "-"                             {return SUB;}
 "*"                             {return MULT;}
 "/"                             {return DIV;}
 "=="                            {return EQL;}
-"="                             {printf("Assignment Equals\n");return ASGN;}
+"="                             {/*printf("Assignment Equals\n");*/return ASGN;}
 ">"                             {return GT;}
 "<"                             {return LT;}
 "{"                             {return OPEN_BRACKET;}
