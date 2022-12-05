@@ -31,24 +31,22 @@ NUM [0-9]
                                     return VAR;
                                 }
 {NUM}+                          {yylval.val = atol(yytext); return NUM;}
-"+"                             {return ADD;}
-"-"                             {return SUB;}
-"*"                             {return MULT;}
-"/"                             {return DIV;}
-"=="                            {return EQL;}
-"="                             {/*printf("Assignment Equals\n");*/return ASGN;}
-">"                             {return GT;}
-"<"                             {return LT;}
+"su'i"                             {return ADD;}
+"vu'u"                             {return SUB;}
+"pi'i"                             {return MULT;}
+"fi'u"                             {return DIV;}
+"dunli"                            {return EQL;}
+"du"                               {return ASGN;}
+"zmadu"                            {return GT;}
+"mleca"                            {return LT;}
 "{"                             {return OPEN_BRACKET;}
 "}"                             {return CLOSE_BRACKET;}
-"continue"                      {return CONTINUE;}
-"break"                         {return BREAK;}
-"if"                            {return IF;}
-"while"                         {return WHILE;}
+"ijanai"                            {return IF;}
+"ze'aba"                         {return WHILE;/*Translates to mediam-time-interval in present tense, not necessarily "while this do this" but more like "for a while do this"*/}
 ";"                             {return SEMI_COLON;}
 "("                             {return OPEN_PAREN;}
 ")"                             {return CLOSE_PAREN;}
-"end"                           {return END;}
+"de'a"                           {return END;/*Stop or pause in lojban*/} 
 "\n"                            {line_num+=1;}
 [ \t]+
 .                               {printf("skipping character: \"%s\"", yytext);}

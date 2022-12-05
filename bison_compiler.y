@@ -48,8 +48,6 @@ statement:
     assignment_statement {$$=$1;} //Pass reference up the chain
     | if_statement {$$=$1;}
     | while_statement {$$=$1;}
-    | CONTINUE {}
-    | BREAK {}
 if_statement:
     IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET {
         $$ = (AST_Node*) new_ast_if($3, $6);

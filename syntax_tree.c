@@ -34,12 +34,6 @@ AST_Node *new_ast_while(AST_Node *condition, AST_Node *while_statements){
     return (struct AST_Node *) new_node;
 }
 
-AST_Node *new_ast_control(int statement_type){
-    AST_Node_Control *new_node = (AST_Node_Control*) malloc(sizeof(AST_Node_Control));
-    new_node->type = CONTROL_NODE;
-    new_node->statement_type = statement_type;
-    return (struct AST_Node*) new_node;
-}
 
 AST_Node *new_ast_arithmetic(Arithmetic_Op operand, AST_Node* left_val, AST_Node* right_val){
     AST_Node_Arithmetic *new_node = (AST_Node_Arithmetic*) malloc(sizeof(AST_Node_Arithmetic));
@@ -72,7 +66,6 @@ AST_Node *new_ast_num(int var_flag, long val, Variable_Node* entry){
 
 void ast_print_node(AST_Node *node){
     AST_Node_Assign *temp_assign;
-    AST_Node_Control *temp_control;
     AST_Node_Arithmetic *temp_arithmetic;
     AST_Node_Condition *temp_condition;
     AST_Node_Num *temp_num;
@@ -95,10 +88,6 @@ void ast_print_node(AST_Node *node){
             break;
         case WHILE_NODE:
             printf("While Node\n");
-            break;
-        case CONTROL_NODE:
-            temp_control = (struct AST_Node_Control*) node;
-            printf("Control Node of type: %d\n", temp_control->statement_type);
             break;
         case ARITHM_NODE:
             temp_arithmetic = (struct AST_Node_Arithmetic*) node;

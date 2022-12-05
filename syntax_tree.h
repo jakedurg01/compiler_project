@@ -6,7 +6,6 @@ typedef enum AST_Node_Type {
 	IF_NODE,     // if statement
     ELSE_NODE,
 	WHILE_NODE,  // while statement
-	CONTROL_NODE, // break/continue
 	ARITHM_NODE, // arithmetic expression
 	CONDITION_NODE,  // condition
     NUM_NODE 
@@ -46,10 +45,6 @@ typedef struct AST_Node_While{
     struct AST_Node *while_statements;
 }AST_Node_While;
 
-typedef struct AST_Node_Control{
-    enum AST_Node_Type type;
-    int statement_type;
-}AST_Node_Control;
 
 typedef struct AST_Node_Arithmetic{
     enum AST_Node_Type type;
@@ -79,7 +74,6 @@ AST_Node *new_ast_node(AST_Node_Type type, AST_Node *left, AST_Node* right);
 AST_Node *new_ast_assign(Variable_Node* entry, AST_Node *val);
 AST_Node *new_ast_if(AST_Node *condition, AST_Node *if_branch);
 AST_Node *new_ast_while(AST_Node *condition, AST_Node *while_statements);
-AST_Node *new_ast_control(int statement_type);
 AST_Node *new_ast_arithmetic(Arithmetic_Op operand, AST_Node* left_val, AST_Node* right_val);
 AST_Node *new_ast_condition(Conditional_Op operand, AST_Node* left_val, AST_Node* right_val);
 AST_Node *new_ast_num(int var_flag, long val, Variable_Node* entry);

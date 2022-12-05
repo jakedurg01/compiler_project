@@ -1,11 +1,11 @@
-$jake = 500;
-$marriah = 1000;
-$both = 300 + 200 * (10 / 5);
-if ($jake < 20){
-    $jake = 9;
+$jake du 500;
+$marriah du 1000;
+$both du 300 su'i 200 pi'i (10 fi'u 5);
+ijanai ($jake mleca 20){
+    $jake du 9;
 }
-$test = 1;
-while($test < 10){
-    $test = $test + 1;
+$test du 1;
+ze'aba($test mleca 10){
+    $test du $test su'i 1;
 }
-end
+de'a
