@@ -484,7 +484,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  25
+#define YYNRULES  24
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  52
 
@@ -538,8 +538,8 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int8 yyrline[] =
 {
        0,    37,    37,    43,    46,    48,    49,    50,    51,    52,
-      54,    56,    58,    62,    65,    68,    70,    73,    76,    78,
-      79,    84,    90,    91,    92,    93
+      54,    58,    62,    66,    69,    72,    74,    77,    80,    82,
+      83,    88,    94,    95,    96
 };
 #endif
 
@@ -599,7 +599,7 @@ static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     8,     9,     0,     0,     4,     6,
        7,     5,     0,     0,     0,     1,     2,     3,    20,    21,
-       0,    25,     0,     0,     0,    15,    18,     0,     0,     0,
+       0,     0,     0,     0,     0,    15,    18,     0,     0,     0,
        0,     0,     0,     0,     0,    12,     0,     0,    19,    22,
       23,    24,     0,     0,    13,    14,    16,    17,     0,     0,
       10,    11
@@ -657,7 +657,7 @@ static const yytype_int8 yyr1[] =
 {
        0,    24,    25,    26,    26,    27,    27,    27,    27,    27,
       28,    29,    30,    31,    31,    31,    32,    32,    32,    33,
-      33,    33,    34,    34,    34,    34
+      33,    33,    34,    34,    34
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -665,7 +665,7 @@ static const yytype_int8 yyr2[] =
 {
        0,     2,     2,     2,     1,     1,     1,     1,     1,     1,
        7,     7,     4,     3,     3,     1,     3,     3,     1,     3,
-       1,     1,     3,     3,     3,     1
+       1,     1,     3,     3,     3
 };
 
 
@@ -1184,120 +1184,118 @@ yyreduce:
 
   case 10: /* if_statement: IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET  */
 #line 54 "bison_compiler.y"
-                                                                              {}
-#line 1189 "bison_compiler.tab.c"
+                                                                              {
+        (yyval.ast_node) = (AST_Node*) new_ast_if((yyvsp[-4].ast_node), (yyvsp[-1].ast_node));
+    }
+#line 1191 "bison_compiler.tab.c"
     break;
 
   case 11: /* while_statement: WHILE OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET  */
-#line 56 "bison_compiler.y"
-                                                                                 {}
-#line 1195 "bison_compiler.tab.c"
+#line 58 "bison_compiler.y"
+                                                                                 {
+        (yyval.ast_node) = (AST_Node*) new_ast_while((yyvsp[-4].ast_node), (yyvsp[-1].ast_node));
+    }
+#line 1199 "bison_compiler.tab.c"
     break;
 
   case 12: /* assignment_statement: VAR ASGN arithmetic_exp SEMI_COLON  */
-#line 58 "bison_compiler.y"
+#line 62 "bison_compiler.y"
                                        {
         (yyval.ast_node) = (AST_Node*) new_ast_assign((yyvsp[-3].symbol_table_entry), (yyvsp[-1].ast_node));
     }
-#line 1203 "bison_compiler.tab.c"
+#line 1207 "bison_compiler.tab.c"
     break;
 
   case 13: /* arithmetic_exp: arithmetic_exp ADD factor  */
-#line 62 "bison_compiler.y"
+#line 66 "bison_compiler.y"
                               {
         (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(ADDITION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
     }
-#line 1211 "bison_compiler.tab.c"
+#line 1215 "bison_compiler.tab.c"
     break;
 
   case 14: /* arithmetic_exp: arithmetic_exp SUB factor  */
-#line 65 "bison_compiler.y"
+#line 69 "bison_compiler.y"
                                 {
         (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(SUBTRACTION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
     }
-#line 1219 "bison_compiler.tab.c"
+#line 1223 "bison_compiler.tab.c"
     break;
 
   case 15: /* arithmetic_exp: factor  */
-#line 68 "bison_compiler.y"
+#line 72 "bison_compiler.y"
              {(yyval.ast_node) = (yyvsp[0].ast_node);}
-#line 1225 "bison_compiler.tab.c"
+#line 1229 "bison_compiler.tab.c"
     break;
 
   case 16: /* factor: factor MULT term  */
-#line 70 "bison_compiler.y"
+#line 74 "bison_compiler.y"
                      {
         (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(MULTIPLICATION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
     }
-#line 1233 "bison_compiler.tab.c"
+#line 1237 "bison_compiler.tab.c"
     break;
 
   case 17: /* factor: factor DIV term  */
-#line 73 "bison_compiler.y"
+#line 77 "bison_compiler.y"
                       {
         (yyval.ast_node) = (AST_Node*) new_ast_arithmetic(DIVISION, (yyvsp[-2].ast_node), (yyvsp[0].ast_node));
     }
-#line 1241 "bison_compiler.tab.c"
+#line 1245 "bison_compiler.tab.c"
     break;
 
   case 18: /* factor: term  */
-#line 76 "bison_compiler.y"
+#line 80 "bison_compiler.y"
            {(yyval.ast_node) = (yyvsp[0].ast_node);}
-#line 1247 "bison_compiler.tab.c"
+#line 1251 "bison_compiler.tab.c"
     break;
 
   case 19: /* term: OPEN_PAREN arithmetic_exp CLOSE_PAREN  */
-#line 78 "bison_compiler.y"
+#line 82 "bison_compiler.y"
                                           {(yyval.ast_node) = (yyvsp[-1].ast_node);}
-#line 1253 "bison_compiler.tab.c"
+#line 1257 "bison_compiler.tab.c"
     break;
 
   case 20: /* term: NUM  */
-#line 79 "bison_compiler.y"
+#line 83 "bison_compiler.y"
           {
         AST_Node* val_node = (AST_Node*) new_ast_num(0, (yyvsp[0].val), NULL);
         AST_Node* rtn_node = (AST_Node*) new_ast_arithmetic(NONE, val_node, NULL);
         (yyval.ast_node)=rtn_node;
     }
-#line 1263 "bison_compiler.tab.c"
+#line 1267 "bison_compiler.tab.c"
     break;
 
   case 21: /* term: VAR  */
-#line 84 "bison_compiler.y"
+#line 88 "bison_compiler.y"
           {
         AST_Node* val_node = (AST_Node*) new_ast_num(1, 0, (yyvsp[0].symbol_table_entry));
         AST_Node* rtn_node = (AST_Node*) new_ast_arithmetic(NONE, val_node, NULL);
         (yyval.ast_node)=rtn_node;
     }
-#line 1273 "bison_compiler.tab.c"
+#line 1277 "bison_compiler.tab.c"
     break;
 
   case 22: /* condition: term EQL term  */
-#line 90 "bison_compiler.y"
-                  {}
-#line 1279 "bison_compiler.tab.c"
+#line 94 "bison_compiler.y"
+                  {(yyval.ast_node) = (AST_Node*) new_ast_condition(EQUAL_TO,(yyvsp[-2].ast_node), (yyvsp[0].ast_node));}
+#line 1283 "bison_compiler.tab.c"
     break;
 
   case 23: /* condition: term GT term  */
-#line 91 "bison_compiler.y"
-                   {}
-#line 1285 "bison_compiler.tab.c"
+#line 95 "bison_compiler.y"
+                   {(yyval.ast_node) = (AST_Node*) new_ast_condition(GREATER_THAN,(yyvsp[-2].ast_node), (yyvsp[0].ast_node));}
+#line 1289 "bison_compiler.tab.c"
     break;
 
   case 24: /* condition: term LT term  */
-#line 92 "bison_compiler.y"
-                   {}
-#line 1291 "bison_compiler.tab.c"
-    break;
-
-  case 25: /* condition: term  */
-#line 93 "bison_compiler.y"
-           {}
-#line 1297 "bison_compiler.tab.c"
+#line 96 "bison_compiler.y"
+                   {(yyval.ast_node) = (AST_Node*) new_ast_condition(LESS_THAN ,(yyvsp[-2].ast_node), (yyvsp[0].ast_node));}
+#line 1295 "bison_compiler.tab.c"
     break;
 
 
-#line 1301 "bison_compiler.tab.c"
+#line 1299 "bison_compiler.tab.c"
 
       default: break;
     }
@@ -1490,7 +1488,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 95 "bison_compiler.y"
+#line 98 "bison_compiler.y"
 
 //bison -d bison_compiler.y
 //flex flex_lexxer.l

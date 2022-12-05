@@ -18,12 +18,11 @@ AST_Node *new_ast_assign(Variable_Node* entry, AST_Node *val){
     return (struct AST_Node *) new_node;
 }
 
-AST_Node *new_ast_if(AST_Node *condition, AST_Node *if_branch, AST_Node *else_branch){
+AST_Node *new_ast_if(AST_Node *condition, AST_Node *if_branch){
     AST_Node_If *new_node = (AST_Node_If*) malloc(sizeof(AST_Node_If));
     new_node->type = IF_NODE;
     new_node->condition = condition;
     new_node->if_branch = if_branch;
-    new_node->else_branch = else_branch;
     return (struct AST_Node *) new_node;    
 }
 
@@ -122,10 +121,47 @@ void ast_traversal(AST_Node *node){
         return;
     }
     enum AST_Node_Type type = node->type;
-    if(type == ROOT_NODE ||  type == CONDITION_NODE){
+    if(type == ROOT_NODE){
         ast_traversal(node->left);
         ast_traversal(node->right);
-    }else if(type==ARITHM_NODE){
+    }else if (type == CONDITION_NODE){
+        AST_Node_Condition *temp = (struct AST_Node_Condition*) node;
+        ast_traversal(node->left);
+        ast_traversal(node->right);
+
+        long left_val;
+        long right_val;
+
+        AST_Node_Arithmetic *left_arith = (struct AST_Node_Arithmetic*) temp->left;
+        AST_Node_Arithmetic *right_arith = (struct AST_Node_Arithmetic*) temp->right;
+
+        left_val = left_arith->val;
+        right_val = right_arith->val;
+
+        if(temp->op == EQUAL_TO){
+            if(left_val == right_val){
+                temp->val = 1;
+            }else{
+                temp->val = 0;
+            }
+        }else if(temp->op == GREATER_THAN){
+            if(left_val > right_val){
+                temp->val = 1;
+            }else{
+                temp->val = 0;
+            }
+        }else if(temp->op == LESS_THAN){
+            if(left_val < right_val){
+                temp->val = 1;
+            }else{
+                temp->val = 0;
+            }
+        }else{
+            printf("Invalid conditional operator\n");
+        }
+
+    }
+    else if(type==ARITHM_NODE){
         AST_Node_Arithmetic *temp = (struct AST_Node_Arithmetic*) node;
         ast_traversal(node->left);
         ast_traversal(node->right);
@@ -159,11 +195,9 @@ void ast_traversal(AST_Node *node){
             //We know left node will have reference to a Node_Num type
             AST_Node_Num* node_num = (struct AST_Node_Num*) temp->left;
             if(node_num->var_flag == 1){
-                printf("traversing var flag high\n");
                 //Get val from variable
                 temp->val = node_num->entry->value;
             }else{
-                printf("traversing var flag low\n");
                 //Literal stored in num node
                 temp->val = node_num->val;
             }
@@ -174,8 +208,15 @@ void ast_traversal(AST_Node *node){
     else if(type == IF_NODE){
         AST_Node_If *temp = (struct AST_Node_If*) node;
         ast_traversal(temp->condition);
-        ast_traversal(temp->if_branch);
-        ast_traversal(temp->else_branch);
+        if(temp->condition->type == CONDITION_NODE){
+            AST_Node_Condition *cond = (AST_Node_Condition*) temp->condition;
+            //Only if condition do we traverse interior, otherwise skip
+            if(cond->val != 0){
+                ast_traversal(temp->if_branch);
+            }
+        }else{
+            printf("Error, invalid condition node\n");
+        }
     }
     else if(type == ASSIGN_NODE){
         AST_Node_Assign *temp = (struct AST_Node_Assign*) node;
@@ -190,8 +231,16 @@ void ast_traversal(AST_Node *node){
     }
     else if(type == WHILE_NODE){
         AST_Node_While *temp = (struct AST_Node_While*) node;
-        ast_traversal(temp->condition);
-        ast_traversal(temp->while_statements);
+        
+        while(1){
+            ast_traversal(temp->condition);
+            if(((AST_Node_Condition*)temp->condition)->val == 1){
+                ast_traversal(temp->while_statements);
+            }else{
+                break;
+            }
+        }
+        
     }
 
     ast_print_node(node);

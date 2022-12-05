@@ -1,4 +1,11 @@
 $jake = 500;
 $marriah = 1000;
 $both = 300 + 200 * (10 / 5);
+if ($jake < 20){
+    $jake = 9;
+}
+$test = 1;
+while($test < 10){
+    $test = $test + 1;
+}
 end

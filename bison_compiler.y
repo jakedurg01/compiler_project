@@ -51,9 +51,13 @@ statement:
     | CONTINUE {}
     | BREAK {}
 if_statement:
-    IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET {}
+    IF OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET {
+        $$ = (AST_Node*) new_ast_if($3, $6);
+    }
 while_statement:
-    WHILE OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET {}
+    WHILE OPEN_PAREN condition CLOSE_PAREN OPEN_BRACKET statements CLOSE_BRACKET {
+        $$ = (AST_Node*) new_ast_while($3, $6);
+    }
 assignment_statement:
     VAR ASGN arithmetic_exp SEMI_COLON {
         $$ = (AST_Node*) new_ast_assign($1, $3);
@@ -87,10 +91,9 @@ term:
         $$=rtn_node;
     }
 condition:
-    term EQL term {}
-    | term GT term {}
-    | term LT term {}
-    | term {}
+    term EQL term {$$ = (AST_Node*) new_ast_condition(EQUAL_TO,$1, $3);}
+    | term GT term {$$ = (AST_Node*) new_ast_condition(GREATER_THAN,$1, $3);}
+    | term LT term {$$ = (AST_Node*) new_ast_condition(LESS_THAN ,$1, $3);}
 
 %%
 //bison -d bison_compiler.y
