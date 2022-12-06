@@ -25,7 +25,6 @@ NUM [0-9]
 
 
 {VARIABLE}                      {
-                                    // printf("Valid Var: %s\n", yytext);
                                     put(yytext, line_num);
                                     yylval.symbol_table_entry = search(yytext);
                                     return VAR;

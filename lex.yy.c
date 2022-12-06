@@ -796,7 +796,6 @@ case 1:
 YY_RULE_SETUP
 #line 27 "flex_lexxer.l"
 {
-                                    // printf("Valid Var: %s\n", yytext);
                                     put(yytext, line_num);
                                     yylval.symbol_table_entry = search(yytext);
                                     return VAR;
@@ -804,111 +803,111 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 33 "flex_lexxer.l"
+#line 32 "flex_lexxer.l"
 {yylval.val = atol(yytext); return NUM;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 34 "flex_lexxer.l"
+#line 33 "flex_lexxer.l"
 {return ADD;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 35 "flex_lexxer.l"
+#line 34 "flex_lexxer.l"
 {return SUB;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "flex_lexxer.l"
+#line 35 "flex_lexxer.l"
 {return MULT;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 37 "flex_lexxer.l"
+#line 36 "flex_lexxer.l"
 {return DIV;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 38 "flex_lexxer.l"
+#line 37 "flex_lexxer.l"
 {return EQL;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "flex_lexxer.l"
+#line 38 "flex_lexxer.l"
 {return ASGN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "flex_lexxer.l"
+#line 39 "flex_lexxer.l"
 {return GT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "flex_lexxer.l"
+#line 40 "flex_lexxer.l"
 {return LT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "flex_lexxer.l"
+#line 41 "flex_lexxer.l"
 {return OPEN_BRACKET;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "flex_lexxer.l"
+#line 42 "flex_lexxer.l"
 {return CLOSE_BRACKET;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 44 "flex_lexxer.l"
+#line 43 "flex_lexxer.l"
 {return IF;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 45 "flex_lexxer.l"
+#line 44 "flex_lexxer.l"
 {return WHILE;/*Translates to mediam-time-interval in present tense, not necessarily "while this do this" but more like "for a while do this"*/}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 46 "flex_lexxer.l"
+#line 45 "flex_lexxer.l"
 {return SEMI_COLON;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 47 "flex_lexxer.l"
+#line 46 "flex_lexxer.l"
 {return OPEN_PAREN;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 48 "flex_lexxer.l"
+#line 47 "flex_lexxer.l"
 {return CLOSE_PAREN;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 49 "flex_lexxer.l"
+#line 48 "flex_lexxer.l"
 {return END;/*Stop or pause in lojban*/} 
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 50 "flex_lexxer.l"
+#line 49 "flex_lexxer.l"
 {line_num+=1;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 51 "flex_lexxer.l"
+#line 50 "flex_lexxer.l"
 
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 52 "flex_lexxer.l"
+#line 51 "flex_lexxer.l"
 {printf("skipping character: \"%s\"", yytext);}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 55 "flex_lexxer.l"
+#line 54 "flex_lexxer.l"
 ECHO;
 	YY_BREAK
-#line 911 "lex.yy.c"
+#line 910 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1913,7 +1912,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 55 "flex_lexxer.l"
+#line 54 "flex_lexxer.l"
 
 
 /* int main() {

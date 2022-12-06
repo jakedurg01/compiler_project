@@ -1,5 +1,5 @@
 $jake du 500;
-$marriah du 1000;
+$durgin du 1000;
 $both du 300 su'i 200 pi'i (10 fi'u 5);
 ijanai ($jake mleca 20){
     $jake du 9;

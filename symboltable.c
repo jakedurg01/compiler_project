@@ -3,7 +3,6 @@
 #include <string.h>
 #include "symboltable.h"
 
-int current_scope = 0;
 
 
 unsigned int hash(char* name){
@@ -29,7 +28,7 @@ void put(char* name, int line_num){
         entry = entry->next;
     }
     //Found symbol in table and same scope
-    if(entry != NULL && entry->scope == current_scope){
+    if(entry != NULL){
         //First note the line number
         Reference_Node *refs = entry->references;
         while( refs != NULL && refs->next != NULL){
@@ -39,8 +38,6 @@ void put(char* name, int line_num){
         new_node->line = line_num;
         new_node->next = NULL;
         refs->next = new_node;
-        //Update scope 
-        entry->scope = current_scope;
        
     //Else create a new var
     }else{
@@ -48,8 +45,6 @@ void put(char* name, int line_num){
         Variable_Node* new_entry = malloc(sizeof(Variable_Node));
         //Copy in name
         strcpy(new_entry->var_name, name);
-        //Update Scope
-        new_entry->scope = current_scope;
         //Update dec line
         new_entry->declaration_line = line_num;
         //Add a reference node
@@ -79,32 +74,12 @@ Variable_Node* search_with_scope(char* name, int scope){
     unsigned int table_index = hash(name);
     Variable_Node* current = hash_table[table_index];
     //Similar to put, we search the chain for a match
-    while((current != NULL) && (strcmp(name, current->var_name) != 0) && (current_scope != current->scope)){
+    while((current != NULL) && (strcmp(name, current->var_name) != 0)){
         current = current->next;
     }
     return current;
 }
 
-void hide_scope(){
-    if(current_scope>0){
-        int i;
-        for(i=0; i < TABLE_SIZE; i++){
-            Variable_Node* v = hash_table[i];
-            //If moving back a scope, wipe out vars from the inner scope
-            while(v != NULL){
-                if(v->scope==current_scope){
-                    v = v->next;
-                }
-            }
-                
-        }
-        current_scope--;
-    }
-}
-void increase_scope(){
-    printf("increasing scope\n");
-    current_scope++;
-}
 
 void var_to_file(FILE *output, Variable_Node* node){
     fprintf(output, "|%-16s|%9ld| ", node->var_name, node->value);

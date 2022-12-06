@@ -21,7 +21,6 @@ typedef struct Variable_Node{
     char var_name[VAR_NAME_LENGTH]; //Max var name length 20 chars
     long value; //Vars only hold integer values
     int declaration_line; //Line on which var is declared/initalized
-    int scope; //used to look for greatest, to least.
     Reference_Node* references; //Lines that reference this varialbe
     struct Variable_Node* next; //for seprate chaining hashtable
 }Variable_Node;
@@ -31,8 +30,6 @@ unsigned int hash(char* name);
 void put(char* name, int line_num);
 Variable_Node* search(char* name);
 Variable_Node* search_with_scope(char* name, int scope);
-void hide_scope();
-void increase_scope();
 void symtab_dump(FILE *output);
 void build_hash_table();
 
